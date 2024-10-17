@@ -10,4 +10,10 @@ export class AirdropController {
     await this.airdropService.processAirdropCsv();
     return { message: 'Airdrop CSV processed successfully' };
   }
+
+  @Post('send-airdrop')
+  async processTransactions() {
+    await this.airdropService.processAirdrops();
+    return { message: 'Airdrop transactions processed successfully' };
+  }
 }

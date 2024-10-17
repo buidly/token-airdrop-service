@@ -19,6 +19,9 @@ export interface Config {
         api: string;
         queue: string;
       };
+      mnemonics: {
+        first: string;
+      };
       database: {
         host: string;
         port: number;

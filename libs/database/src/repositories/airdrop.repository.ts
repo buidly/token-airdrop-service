@@ -25,10 +25,10 @@ export class AirdropRepository {
     return await newAirdrop.save();
   }
 
-  async getHundredAirdropsToExecute(): Promise<Airdrop[]> {
+  async findBatchWithoutTxHash(batchSize: number): Promise<Airdrop[]> {
     return await this.airdropModel
       .find({ txHash: { $exists: false } })
-      .limit(100)
+      .limit(batchSize)
       .exec();
   }
 

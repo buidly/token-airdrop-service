@@ -56,6 +56,7 @@
     "@nestjs/typeorm": "10.0.0",
     "@nestjs/websockets": "10.2.8",
     "agentkeepalive": "^4.3.0",
+    "axios": "^1.7.7",
     "bull": "^4.10.4",
     "cache-manager": "^5.2.1",
     "class-transformer": "^0.5.1",

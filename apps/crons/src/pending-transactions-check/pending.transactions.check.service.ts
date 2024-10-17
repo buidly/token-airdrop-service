@@ -8,7 +8,6 @@ export class PendingTransactionsCheckService {
 
   @Cron('*/30 * * * * *')
   async checkPendingTransactions(): Promise<void> {
-    console.log(new Date().toLocaleString());
     await this.airdropService.cleanupOldTransactions();
   }
 }

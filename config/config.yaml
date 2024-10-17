@@ -12,6 +12,8 @@ libs:
     urls:
       api: ${API_URL}
       queue: ${QUEUE_URL}
+    mnemonics:
+      first: ${MNEMONIC_1}
     database:
       host: 'localhost'
       port: 27017
