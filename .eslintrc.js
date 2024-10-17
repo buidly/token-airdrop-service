@@ -28,8 +28,8 @@ module.exports = {
         pattern: 'apps/api',
       },
       {
-        type: 'apps/cache-warmer',
-        pattern: 'apps/cache-warmer',
+        type: 'apps/events-notifier',
+        pattern: 'apps/events-notifier',
       },
       {
         type: 'apps/queue-worker',
@@ -82,7 +82,7 @@ module.exports = {
           allow: ['libs/common', 'libs/entities', 'libs/services']
         },
         {
-          from: 'apps/cache-warmer',
+          from: 'apps/events-notifier',
           allow: ['libs/common', 'libs/entities', 'libs/services']
         },
         {

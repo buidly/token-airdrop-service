@@ -54,6 +54,25 @@
         ]
       }
     },
+    "events-notifier": {
+      "type": "application",
+      "root": "apps/events-notifier",
+      "entryFile": "main",
+      "sourceRoot": "apps/events-notifier/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/events-notifier/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "../config/config.yaml",
+            "outDir": "./dist/config"
+          },
+          {
+            "include": "../config/schema.yaml",
+            "outDir": "./dist/config"
+          }
+        ]
+      }
+    },
     "queue-worker": {
       "type": "application",
       "root": "apps/queue-worker",

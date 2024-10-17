@@ -7,22 +7,17 @@ export interface Config {
       privatePort: number;
       useCachingInterceptor: boolean;
     };
-    cacheWarmer: {
+    eventsNotifier: {
       port: number;
-    };
-    queueWorker: {
-      port: number;
-    };
-    transactionsProcessor: {
-      port: number;
-      maxLookBehind: number;
+      privatePort: number;
     };
   };
   libs: {
     common: {
-      network: "devnet" | "testnet" | "mainnet";
+      network: 'devnet' | 'testnet' | 'mainnet';
       urls: {
         api: string;
+        queue: string;
       };
       database: {
         host: string;

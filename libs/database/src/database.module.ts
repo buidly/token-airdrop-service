@@ -1,9 +1,8 @@
 import { CommonConfigModule, CommonConfigService } from '@libs/common';
-import { Token, TokenSchema, User, UserSchema } from '@libs/entities';
+import { Airdrop, AirdropSchema } from '@libs/entities';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TokenRepository } from './repositories/token.repository';
-import { UserRepository } from './repositories';
+import { AirdropRepository } from './repositories';
 
 @Module({
   imports: [
@@ -14,22 +13,14 @@ import { UserRepository } from './repositories';
         dbName: configService.config.database.name,
         user: configService.config.database.username,
         pass: configService.config.database.password,
-        tlsAllowInvalidCertificates: configService.config.database.tlsAllowInvalidCertificates,
+        tlsAllowInvalidCertificates:
+          configService.config.database.tlsAllowInvalidCertificates,
       }),
       inject: [CommonConfigService],
     }),
-    MongooseModule.forFeature([
-      { name: Token.name, schema: TokenSchema },
-      { name: User.name, schema: UserSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Airdrop.name, schema: AirdropSchema }]),
   ],
-  providers: [
-    TokenRepository,
-    UserRepository,
-  ],
-  exports: [
-    TokenRepository,
-    UserRepository,
-  ],
+  providers: [AirdropRepository],
+  exports: [AirdropRepository],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}

@@ -4,13 +4,9 @@ apps:
     port: integer
     privatePort: integer
     useCachingInterceptor: boolean
-  cacheWarmer:
+  eventsNotifier:
     port: integer
-  queueWorker:
-    port: integer
-  transactionsProcessor:
-    port: integer
-    maxLookBehind: integer
+    privatePort: integer
 libs:
   common:
     network:
@@ -18,6 +14,7 @@ libs:
       enum: [devnet, testnet, mainnet]
     urls:
       api: string
+      queue: string
     database:
       host: string
       port: integer

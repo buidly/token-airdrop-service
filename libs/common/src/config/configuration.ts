@@ -1,6 +1,9 @@
-import { ConfigurationLoader, ConfigurationLoaderSettings } from "@multiversx/sdk-nestjs-common";
-import { join } from "path";
-import { Config } from "../entities/config";
+import {
+  ConfigurationLoader,
+  ConfigurationLoaderSettings,
+} from '@multiversx/sdk-nestjs-common';
+import { join } from 'path';
+import { Config } from '../entities/config';
 
 const CONFIG_DIRECTORY = '../../../../config/';
 const YAML_CONFIG_FILENAME = CONFIG_DIRECTORY + 'config.yaml';
@@ -14,6 +17,7 @@ export function configuration(): Config {
     configPath,
     schemaPath,
   });
+  console.log({ settings });
 
   return ConfigurationLoader.getConfiguration<Config>(settings);
 }

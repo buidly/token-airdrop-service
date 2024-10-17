@@ -3,18 +3,15 @@ apps:
     port: 3000
     privatePort: 4000
     useCachingInterceptor: true
-  cacheWarmer:
-    port: 4001
-  queueWorker:
-    port: 4002
-  transactionsProcessor:
-    port: 4003
-    maxLookBehind: 100
+  eventsNotifier:
+    port: 3005
+    privatePort: 4005
 libs:
   common:
     network: ${NETWORK}
     urls:
       api: ${API_URL}
+      queue: ${QUEUE_URL}
     database:
       host: 'localhost'
       port: 27017
