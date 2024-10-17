@@ -32,6 +32,10 @@ module.exports = {
         pattern: 'apps/events-notifier',
       },
       {
+        type: 'apps/crons',
+        pattern: 'apps/crons',
+      },
+      {
         type: 'apps/queue-worker',
         pattern: 'apps/queue-worker',
       },
@@ -83,6 +87,10 @@ module.exports = {
         },
         {
           from: 'apps/events-notifier',
+          allow: ['libs/common', 'libs/entities', 'libs/services', 'apps/api/src/endpoints/airdrop']
+        },
+        {
+          from: 'apps/crons',
           allow: ['libs/common', 'libs/entities', 'libs/services', 'apps/api/src/endpoints/airdrop']
         },
         {

@@ -54,6 +54,25 @@
         ]
       }
     },
+    "crons": {
+      "type": "application",
+      "root": "apps/crons",
+      "entryFile": "main",
+      "sourceRoot": "apps/crons/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/crons/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "../config/config.yaml",
+            "outDir": "./dist/config"
+          },
+          {
+            "include": "../config/schema.yaml",
+            "outDir": "./dist/config"
+          }
+        ]
+      }
+    },
     "transactions-processor": {
       "type": "application",
       "root": "apps/transactions-processor",

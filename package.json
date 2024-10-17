@@ -13,6 +13,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:api": "cross-env NODE_APP=api npm run start",
     "start:events-notifier": "cross-env NODE_APP=events-notifier npm run start",
+    "start:crons": "cross-env NODE_APP=crons npm run start",
     "start:cache-warmer": "cross-env NODE_APP=cache-warmer npm run start",
     "start:queue-worker": "cross-env NODE_APP=queue-worker npm run start",
     "start:transactions-processor": "cross-env NODE_APP=transactions-processor npm run start",
