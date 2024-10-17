@@ -35,13 +35,13 @@
         ]
       }
     },
-    "transactions-processor": {
+    "events-notifier": {
       "type": "application",
-      "root": "apps/transactions-processor",
+      "root": "apps/events-notifier",
       "entryFile": "main",
-      "sourceRoot": "apps/transactions-processor/src",
+      "sourceRoot": "apps/events-notifier/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/transactions-processor/tsconfig.app.json",
+        "tsConfigPath": "apps/events-notifier/tsconfig.app.json",
         "assets": [
           {
             "include": "../config/config.yaml",
@@ -54,13 +54,13 @@
         ]
       }
     },
-    "events-notifier": {
+    "transactions-processor": {
       "type": "application",
-      "root": "apps/events-notifier",
+      "root": "apps/transactions-processor",
       "entryFile": "main",
-      "sourceRoot": "apps/events-notifier/src",
+      "sourceRoot": "apps/transactions-processor/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/events-notifier/tsconfig.app.json",
+        "tsConfigPath": "apps/transactions-processor/tsconfig.app.json",
         "assets": [
           {
             "include": "../config/config.yaml",

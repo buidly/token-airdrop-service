@@ -7,17 +7,13 @@ import { NotifierBlockEvent } from './entities/notifier.block.event';
 export class EventsNotifierConsumerService {
   private readonly logger: Logger;
 
-  constructor(
-    // private readonly configService: CommonConfigService,
-    private readonly airdropService: AirdropService,
-  ) {
+  constructor(private readonly airdropService: AirdropService) {
     this.logger = new Logger(EventsNotifierConsumerService.name);
   }
 
   EGLD_DECIMALS: number = 18;
   @RabbitSubscribe({
-    queue:
-      'amqp://materiaprima-local:materiaprimalocal123@devnet-rabbitmq.beaconx.app:5672',
+    queue: 'materiaprima-local',
     createQueueIfNotExists: false,
   })
   async consumeEvents(blockEvent: NotifierBlockEvent) {

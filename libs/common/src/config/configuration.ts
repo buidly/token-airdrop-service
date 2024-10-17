@@ -17,7 +17,6 @@ export function configuration(): Config {
     configPath,
     schemaPath,
   });
-  console.log({ settings });
 
   return ConfigurationLoader.getConfiguration<Config>(settings);
 }

@@ -83,7 +83,7 @@ module.exports = {
         },
         {
           from: 'apps/events-notifier',
-          allow: ['libs/common', 'libs/entities', 'libs/services']
+          allow: ['libs/common', 'libs/entities', 'libs/services', 'apps/api/src/endpoints/airdrop']
         },
         {
           from: 'apps/queue-worker',

@@ -5,17 +5,20 @@ import {
 import { Module } from '@nestjs/common';
 import { EventsNotifierConsumerService } from './events.notifier.consumer.service';
 import { EventsNotifierConfigModule } from './config/events-notifier-config.module';
+// eslint-disable-next-line no-restricted-imports
+import { AirdropModule } from 'apps/api/src/endpoints/airdrop/airdrop.module';
+import { CommonConfigModule, CommonConfigService } from '@libs/common';
 
 @Module({
   imports: [
+    CommonConfigModule,
     RabbitModule.forRootAsync({
-      useFactory: () =>
-        new RabbitModuleOptions(
-          'amqp://materiaprima-local:materiaprimalocal123@devnet-rabbitmq.beaconx.app:5672',
-          [],
-        ),
+      inject: [CommonConfigService],
+      useFactory: (commonConfigService: CommonConfigService) =>
+        new RabbitModuleOptions(commonConfigService.config.urls.queue, []),
     }),
     EventsNotifierConfigModule,
+    AirdropModule,
   ],
   providers: [EventsNotifierConsumerService],
 })

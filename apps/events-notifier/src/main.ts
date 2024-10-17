@@ -1,30 +1,29 @@
-import 'module-alias/register';
 import * as dotenv from 'dotenv';
+import 'module-alias/register';
 import { resolve } from 'path';
 
+// Determine which .env file to load based on NODE_ENV
+const envPath =
+  process.env.NODE_ENV === 'infra'
+    ? '.env'
+    : `.env.${process.env.NODE_ENV ?? 'mainnet'}`;
 dotenv.config({
-  path: resolve(process.cwd(), '.env'),
+  path: resolve(process.cwd(), envPath),
 });
 
-import { NestFactory } from '@nestjs/core';
-import {
-  CommonConfigModule,
-  CommonConfigService,
-  PubSubListenerModule,
-} from '@libs/common';
-import { Logger } from '@nestjs/common';
+import { CommonConfigService, PubSubListenerModule } from '@libs/common';
 import { LoggerInitializer } from '@multiversx/sdk-nestjs-common';
+import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/array.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/date.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/number.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/string.extensions';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { PrivateAppModule } from './private.app.module';
-import { EventsNotifierModule } from './events.notifier.module';
 import { EventsNotifierConfigService } from './config/events-notifier-config.service';
-import { EventsNotifierConfigModule } from './config/events-notifier-config.module';
+import { EventsNotifierModule } from './events.notifier.module';
+import { PrivateAppModule } from './private.app.module';
 
 const logger = new Logger('Bootstrapper');
 
@@ -59,22 +58,16 @@ const setupPubSubApp = async (apiConfigService: CommonConfigService) => {
       },
     },
   );
-  pubSubApp.useLogger(pubSubApp.get(WINSTON_MODULE_NEST_PROVIDER));
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   pubSubApp.listen();
 };
 
 async function bootstrap() {
-  const eventsNotifierConfigApp = await NestFactory.create(
-    EventsNotifierConfigModule,
+  const app = await NestFactory.create(PrivateAppModule);
+  const eventsNotifierConfigService = app.get<EventsNotifierConfigService>(
+    EventsNotifierConfigService,
   );
-  const apiConfigApp = await NestFactory.create(CommonConfigModule);
-  const eventsNotifierConfigService =
-    eventsNotifierConfigApp.get<EventsNotifierConfigService>(
-      EventsNotifierConfigService,
-    );
-  const apiConfigService =
-    apiConfigApp.get<CommonConfigService>(CommonConfigService);
+  const apiConfigService = app.get<CommonConfigService>(CommonConfigService);
 
   LoggerInitializer.initialize(logger);
 
