@@ -1,14 +1,19 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { CommonConfigService } from '@libs/common';
 import { AirdropService } from '@libs/services';
+import { Mnemonic, UserSigner } from '@multiversx/sdk-wallet/out';
 import { Injectable, Logger } from '@nestjs/common';
+import { ESDT_TRANSFER_IDENTIFIER } from './entities/events.utils';
 import { NotifierBlockEvent } from './entities/notifier.block.event';
-import { Address } from '@multiversx/sdk-core/out';
 
 @Injectable()
 export class EventsNotifierConsumerService {
   private readonly logger: Logger;
 
-  constructor(private readonly airdropService: AirdropService) {
+  constructor(
+    private readonly airdropService: AirdropService,
+    private readonly commonConfigService: CommonConfigService,
+  ) {
     this.logger = new Logger(EventsNotifierConsumerService.name);
   }
 
@@ -25,21 +30,19 @@ export class EventsNotifierConsumerService {
 
       for (const event of filteredEvents) {
         const identifier = event.identifier;
-        if (identifier === 'ESDTTransfer') {
-          const addressHex = Buffer.from(event.topics[3], 'base64').toString(
-            'hex',
-          );
-          const tokenIdentifierHex = Buffer.from(
-            event.topics[0],
-            'base64',
-          ).toString('hex');
-          const tokenIdentifierString = Buffer.from(
-            tokenIdentifierHex,
-            'hex',
-          ).toString('utf-8');
-          console.log({ tokenIdentifierString });
-          const address1 = Address.fromHex(addressHex);
-          console.log(address1.toString()), console.log({ event });
+        if (identifier === ESDT_TRANSFER_IDENTIFIER) {
+          // const addressHex = Buffer.from(event.topics[3], 'base64').toString(
+          //   'hex',
+          // );
+          // const tokenIdentifierHex = Buffer.from(
+          //   event.topics[0],
+          //   'base64',
+          // ).toString('hex');
+          // const tokenIdentifierString = Buffer.from(
+          //   tokenIdentifierHex,
+          //   'hex',
+          // ).toString('utf-8');
+          // const address1 = Address.fromHex(addressHex);
           const txHash = event.txHash;
           await this.airdropService.executeTransaction(txHash);
         }
@@ -56,9 +59,11 @@ export class EventsNotifierConsumerService {
   }
 
   private isFilteredAddress(address: string) {
-    return (
-      address ===
-      'erd1lu0s4s46rqwlwcpt6g8t4wlj9jnd39hxt7asjxyg2qmk2asv7q8quzuxpx'
-    );
+    const mnemonic = Mnemonic.fromString(
+      this.commonConfigService.config.mnemonics.first,
+    ).deriveKey(0);
+    const signer = new UserSigner(mnemonic);
+    const senderAddress = signer.getAddress().bech32();
+    return address === senderAddress;
   }
 }
