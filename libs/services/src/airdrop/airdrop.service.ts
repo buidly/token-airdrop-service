@@ -65,6 +65,8 @@ export class AirdropService {
     for await (const record of parser) {
       await this.create(record.address, record.amount);
     }
+
+    console.log('CSV file processed with success.');
   }
 
   async getAccountNonce(address: string): Promise<number | undefined> {
@@ -98,8 +100,8 @@ export class AirdropService {
     const signer = new UserSigner(mnemonic);
     const senderAddress = signer.getAddress().bech32();
 
-    let recordsProcessed = 0;
     let hasMoreRecords = true;
+    let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
 
     while (hasMoreRecords) {
       const airdrops = await this.findBatchWithoutTxHash(batchSize);
@@ -112,9 +114,6 @@ export class AirdropService {
       for (const airdrop of airdrops) {
         try {
           const { address, amount } = airdrop;
-          const nonce = await this.getAccountNonce(senderAddress);
-
-          console.log({ address, amount, nonce });
 
           const payment = TokenTransfer.fungibleFromAmount(
             'TA1-c3e1a2',
@@ -134,7 +133,6 @@ export class AirdropService {
           const signature = await signer.sign(
             transaction.serializeForSigning(),
           );
-
           transaction.applySignature(signature);
 
           const response = await axios.post(
@@ -144,16 +142,15 @@ export class AirdropService {
           const { txHash } = response.data;
           await this.addTransaction(address, txHash);
 
-          console.log(`Successfully sent ${amount} tokens to ${address}`);
-          hasMoreRecords = false;
+          console.log(
+            `Successfully sent ${amount} tokens to ${address} with txHash ${txHash}`,
+          );
+
+          nonce += 1;
         } catch (error) {
-          console.error(`Failed to send tokens to ${airdrop.address}`, error);
-          hasMoreRecords = false;
+          console.error(`Failed to send tokens to ${airdrop.address}`);
         }
       }
-
-      recordsProcessed += airdrops.length;
-      console.log(`Processed ${recordsProcessed} records so far.`);
     }
 
     console.log('Airdrop processing completed.');

@@ -61,7 +61,7 @@ export class AirdropRepository {
       if (!airdrop || !airdrop.pending) {
         return null;
       }
-
+      console.log(`Tx with success for ${airdrop.address}`);
       return await this.airdropModel
         .findOneAndUpdate(
           { txHash },
