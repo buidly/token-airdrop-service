@@ -36,17 +36,22 @@ export class AirdropRepository {
     address: string,
     txHash: string,
   ): Promise<Airdrop | null> {
-    return await this.airdropModel
-      .findOneAndUpdate(
-        { address },
-        {
-          txHash,
-          timestamp: Date.now(),
-          pending: true,
-        },
-        { new: true },
-      )
-      .exec();
+    try {
+      return await this.airdropModel
+        .findOneAndUpdate(
+          { address },
+          {
+            txHash,
+            timestamp: Date.now(),
+            pending: true,
+          },
+          { new: true },
+        )
+        .exec();
+    } catch (error) {
+      console.error(`Failed to add transaction for address ${address}:`, error);
+      return null;
+    }
   }
 
   async executeTransaction(txHash: string): Promise<Airdrop | null> {
