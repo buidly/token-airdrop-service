@@ -22,6 +22,9 @@ export interface Config {
       mnemonics: {
         first: string;
       };
+      tokens: {
+        first: string;
+      };
       database: {
         host: string;
         port: number;

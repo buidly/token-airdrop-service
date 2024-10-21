@@ -116,7 +116,7 @@ export class AirdropService {
           const { address, amount } = airdrop;
 
           const payment = TokenTransfer.fungibleFromAmount(
-            'TA1-c3e1a2',
+            this.commonConfigService.config.tokens.first,
             amount,
             18,
           );

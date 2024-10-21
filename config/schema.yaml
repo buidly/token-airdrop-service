@@ -17,6 +17,8 @@ libs:
       queue: string
     mnemonics:
       first: string
+    tokens:
+      first: string
     database:
       host: string
       port: integer
