@@ -11,9 +11,8 @@ import {
 import { Mnemonic, UserSigner } from '@multiversx/sdk-wallet/out';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { parse } from 'csv-parse';
-import { createReadStream } from 'fs';
 import * as path from 'path';
+const csvBatchPackage = require('csv-batch');
 
 @Injectable()
 export class AirdropService {
@@ -22,8 +21,17 @@ export class AirdropService {
     private readonly commonConfigService: CommonConfigService,
   ) {}
 
-  async create(address: string, amount: string): Promise<Airdrop | null> {
-    return await this.airdropRepository.create(address, amount);
+  async createMany(
+    records: Array<{ address: string; amount: string }>,
+  ): Promise<Airdrop[] | null> {
+    try {
+      const result = await this.airdropRepository.createMany(records);
+
+      return result;
+    } catch (error) {
+      console.error('Error processing batch:', error);
+      throw error;
+    }
   }
 
   async findBatchWithoutTxHash(batchSize: number): Promise<Airdrop[]> {
@@ -35,6 +43,12 @@ export class AirdropService {
     txHash: string,
   ): Promise<Airdrop | null> {
     return await this.airdropRepository.addTransaction(address, txHash);
+  }
+
+  async addTransactions(
+    updates: Array<{ address: string; txHash: string }>,
+  ): Promise<void> {
+    return await this.airdropRepository.addTransactions(updates);
   }
 
   async executeTransaction(txHash: string): Promise<Airdrop | null> {
@@ -55,15 +69,15 @@ export class AirdropService {
       'airdrop.csv',
     );
 
-    const parser = createReadStream(filePath).pipe(
-      parse({
-        columns: true,
-        skip_empty_lines: true,
-      }),
-    );
+    const batchSize = 10000;
 
-    for await (const record of parser) {
-      await this.create(record.address, record.amount);
+    const csvBatch = new csvBatchPackage(filePath, {
+      batchSize,
+      columns: true,
+    });
+
+    for await (const batch of csvBatch) {
+      await this.createMany(batch);
     }
 
     console.log('CSV file processed with success.');
@@ -84,6 +98,41 @@ export class AirdropService {
     return response;
   }
 
+  async createAndSendTransaction(
+    factory: TransferTransactionsFactory,
+    signer: UserSigner,
+    amount: string,
+    address: string,
+    senderAddress: string,
+    chainId: string,
+    nonce: number,
+  ): Promise<string> {
+    const payment = TokenTransfer.fungibleFromAmount(
+      this.commonConfigService.config.tokens.first,
+      amount,
+      18,
+    );
+
+    const transaction = factory.createTransactionForESDTTokenTransfer({
+      sender: new Address(senderAddress),
+      receiver: new Address(address),
+      tokenTransfers: [payment],
+    });
+    transaction.nonce = BigInt(nonce || 0);
+    transaction.chainID = chainId;
+    transaction.value = BigInt(0);
+
+    const signature = await signer.sign(transaction.serializeForSigning());
+    transaction.applySignature(signature);
+
+    const response = await axios.post(
+      `${this.commonConfigService.config.urls.api}/transactions`,
+      transaction.toSendable(),
+    );
+    const { txHash } = response.data;
+    return txHash;
+  }
+
   public async processAirdrops(): Promise<void> {
     const chainId =
       this.commonConfigService.config.network.toString() === 'devnet'
@@ -93,12 +142,13 @@ export class AirdropService {
       chainID: chainId,
     });
     const factory = new TransferTransactionsFactory({ config: factoryConfig });
-    const batchSize = 50;
     const mnemonic = Mnemonic.fromString(
       this.commonConfigService.config.mnemonics.first,
     ).deriveKey(0);
     const signer = new UserSigner(mnemonic);
     const senderAddress = signer.getAddress().bech32();
+
+    const batchSize = 10000;
 
     let hasMoreRecords = true;
     let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
@@ -111,36 +161,22 @@ export class AirdropService {
         continue;
       }
 
+      const batchUpdates: Array<{ address: string; txHash: string }> = [];
+
       for (const airdrop of airdrops) {
         try {
           const { address, amount } = airdrop;
 
-          const payment = TokenTransfer.fungibleFromAmount(
-            this.commonConfigService.config.tokens.first,
+          const txHash = await this.createAndSendTransaction(
+            factory,
+            signer,
             amount,
-            18,
+            address,
+            senderAddress,
+            chainId,
+            nonce,
           );
-
-          const transaction = factory.createTransactionForESDTTokenTransfer({
-            sender: new Address(senderAddress),
-            receiver: new Address(address),
-            tokenTransfers: [payment],
-          });
-          transaction.nonce = BigInt(nonce || 0);
-          transaction.chainID = chainId;
-          transaction.value = BigInt(0);
-
-          const signature = await signer.sign(
-            transaction.serializeForSigning(),
-          );
-          transaction.applySignature(signature);
-
-          const response = await axios.post(
-            `${this.commonConfigService.config.urls.api}/transactions`,
-            transaction.toSendable(),
-          );
-          const { txHash } = response.data;
-          await this.addTransaction(address, txHash);
+          batchUpdates.push({ address, txHash });
 
           console.log(
             `Successfully sent ${amount} tokens to ${address} with txHash ${txHash}`,
@@ -149,6 +185,14 @@ export class AirdropService {
           nonce += 1;
         } catch (error) {
           console.error(`Failed to send tokens to ${airdrop.address}`);
+        }
+      }
+
+      if (batchUpdates.length > 0) {
+        try {
+          await this.addTransactions(batchUpdates);
+        } catch (error) {
+          console.error('Failed to update transaction batch:', error);
         }
       }
     }

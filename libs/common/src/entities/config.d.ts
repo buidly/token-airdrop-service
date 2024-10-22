@@ -17,6 +17,7 @@ export interface Config {
       network: 'devnet' | 'testnet' | 'mainnet';
       urls: {
         api: string;
+        gateway: string;
         queue: string;
       };
       mnemonics: {

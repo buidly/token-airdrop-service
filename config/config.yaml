@@ -11,6 +11,7 @@ libs:
     network: ${NETWORK}
     urls:
       api: ${API_URL}
+      gateway: ${GATEWAY_URL}
       queue: ${QUEUE_URL}
     mnemonics:
       first: ${MNEMONIC_1}

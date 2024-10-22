@@ -5,7 +5,7 @@ export type AirdropDocument = Airdrop & Document;
 
 @Schema()
 export class Airdrop {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   address: string = '';
 
   @Prop({ required: true })

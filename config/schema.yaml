@@ -14,6 +14,7 @@ libs:
       enum: [devnet, testnet, mainnet]
     urls:
       api: string
+      gateway: string
       queue: string
     mnemonics:
       first: string

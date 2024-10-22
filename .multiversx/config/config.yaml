@@ -4,14 +4,19 @@ apps:
     privatePort: 4000
     useCachingInterceptor: true
   eventsNotifier:
-    port: 3001
-    privatePort: 4001
-    queue: ${QUEUE_URL}
+    port: 3005
+    privatePort: 4005
 libs:
   common:
     network: ${NETWORK}
     urls:
       api: ${API_URL}
+      gateway: ${GATEWAY_URL}
+      queue: ${QUEUE_URL}
+    mnemonics:
+      first: ${MNEMONIC_1}
+    tokens:
+      first: ${TOKEN_IDENTIFIER}
     database:
       host: 'localhost'
       port: 27017

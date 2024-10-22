@@ -25,6 +25,26 @@ export class AirdropRepository {
     return await newAirdrop.save();
   }
 
+  async createMany(
+    records: Array<{ address: string; amount: string }>,
+  ): Promise<Airdrop[] | null> {
+    try {
+      const result = await this.airdropModel.insertMany(records, {
+        ordered: false,
+      });
+
+      return result;
+    } catch (error) {
+      if (error instanceof Error && (error as any).code === 11000) {
+        console.warn('Some records were skipped due to duplicate addresses.');
+        return null;
+      }
+
+      console.error('Error processing batch:', error);
+      throw error;
+    }
+  }
+
   async findBatchWithoutTxHash(batchSize: number): Promise<Airdrop[]> {
     return await this.airdropModel
       .find({ txHash: { $exists: false } })
@@ -51,6 +71,34 @@ export class AirdropRepository {
     } catch (error) {
       console.error(`Failed to add transaction for address ${address}:`, error);
       return null;
+    }
+  }
+
+  async addTransactions(
+    updates: Array<{ address: string; txHash: string }>,
+  ): Promise<void> {
+    try {
+      const updateOperations = updates.map(({ address, txHash }) => ({
+        updateOne: {
+          filter: { address },
+          update: {
+            $set: {
+              txHash,
+              timestamp: Date.now(),
+              pending: true,
+            },
+          },
+        },
+      }));
+
+      await this.airdropModel.bulkWrite(updateOperations, {
+        ordered: false,
+      });
+
+      return;
+    } catch (error) {
+      console.error('Batch update failed:', error);
+      return;
     }
   }
 
