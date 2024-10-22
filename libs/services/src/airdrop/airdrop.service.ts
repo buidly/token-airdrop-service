@@ -178,10 +178,6 @@ export class AirdropService {
           txBatch.push(transaction.toSendable());
           batchUpdates.push({ address, txHash });
 
-          console.log(
-            `Successfully sent ${amount} tokens to ${address} with txHash ${txHash}`,
-          );
-
           nonce += 1;
         } catch (error) {
           console.error(`Failed to send tokens to ${airdrop.address}`);
