@@ -36,14 +36,6 @@ module.exports = {
         pattern: 'apps/crons',
       },
       {
-        type: 'apps/queue-worker',
-        pattern: 'apps/queue-worker',
-      },
-      {
-        type: 'apps/transactions-processor',
-        pattern: 'apps/transactions-processor',
-      },
-      {
         type: 'libs/common',
         pattern: 'libs/common'
       },
@@ -92,14 +84,6 @@ module.exports = {
         {
           from: 'apps/crons',
           allow: ['libs/common', 'libs/entities', 'libs/services', 'apps/api/src/endpoints/airdrop']
-        },
-        {
-          from: 'apps/queue-worker',
-          allow: ['libs/common', 'libs/entities', 'libs/services']
-        },
-        {
-          from: 'apps/transactions-processor',
-          allow: ['libs/common', 'libs/entities', 'libs/services']
         },
         {
           from: 'libs/database',
