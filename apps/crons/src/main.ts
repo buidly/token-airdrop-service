@@ -28,9 +28,9 @@ const logger = new Logger('Bootstrapper');
 
 const setupPrivateApp = async () => {
   const privateApp = await NestFactory.create(PrivateAppModule);
-  await privateApp.listen(4006);
+  await privateApp.listen(4007);
 
-  logger.log(`Private API active on port ${4006}`);
+  logger.log(`Private CRONS active on port ${4007}`);
 };
 
 const setupPubSubApp = async (apiConfigService: CommonConfigService) => {

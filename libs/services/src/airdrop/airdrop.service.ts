@@ -137,7 +137,7 @@ export class AirdropService {
     const signer = new UserSigner(mnemonic);
     const senderAddress = signer.getAddress().bech32();
 
-    const batchSize = 2000;
+    const batchSize = 99;
 
     let hasMoreRecords = true;
     let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
@@ -153,7 +153,7 @@ export class AirdropService {
       const txBatch: any[] = [];
       const batchUpdates: Array<{ address: string; txHash: string }> = [];
 
-      const transactionPromises = airdrops.map(async (airdrop) => {
+      const transactionPromises = airdrops.map(async (airdrop, index) => {
         try {
           const { address, amount } = airdrop;
           const transaction = await this.createTransaction(
@@ -163,20 +163,20 @@ export class AirdropService {
             address,
             senderAddress,
             chainId,
-            nonce,
+            nonce + index,
           );
 
           const txHash = transaction.getHash().toString();
           txBatch.push(transaction.toSendable());
           batchUpdates.push({ address, txHash });
-
-          nonce += 1;
         } catch (error) {
           console.error(`Failed to send tokens to ${airdrop.address}`);
         }
       });
 
       await Promise.all(transactionPromises);
+
+      nonce = nonce + batchSize;
 
       if (batchUpdates.length > 0) {
         try {
@@ -185,10 +185,13 @@ export class AirdropService {
             `Updated database with ${batchUpdates.length} transaction hashes.`,
           );
 
-          await axios.post(
+          const response = await axios.post(
             `${this.commonConfigService.config.urls.gateway}/transaction/send-multiple`,
             txBatch,
           );
+          console.log({
+            msg: response.data,
+          });
         } catch (error) {
           console.error('Failed during batch processing:', error);
         }
