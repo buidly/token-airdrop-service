@@ -61,7 +61,6 @@
     "cookie-parser": "^1.4.6",
     "cron": "^3.1.6",
     "csv-batch": "^2.0.6",
-    "csv-parse": "^5.5.6",
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.3",
