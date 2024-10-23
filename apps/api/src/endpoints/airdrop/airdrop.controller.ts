@@ -10,10 +10,4 @@ export class AirdropController {
     void this.airdropService.processAirdropCsv();
     return { message: 'Airdrop CSV processed successfully' };
   }
-
-  @Post('send-airdrop')
-  processTransactions() {
-    void this.airdropService.processAirdrops();
-    return { message: 'Airdrop transactions processed successfully' };
-  }
 }

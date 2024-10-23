@@ -10,4 +10,9 @@ export class PendingTransactionsCheckService {
   async checkPendingTransactions(): Promise<void> {
     await this.airdropService.cleanupOldTransactions();
   }
+
+  @Cron('0 * * * * *')
+  async sendAirdrops(): Promise<void> {
+    await this.airdropService.processAirdrops();
+  }
 }

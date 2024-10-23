@@ -92,14 +92,6 @@ export class AirdropService {
     return nonce;
   }
 
-  async sendTransaction(transaction: Transaction): Promise<any> {
-    const response = await axios.post(
-      `${this.commonConfigService.config.urls.api}/transactions`,
-      transaction.toSendable(),
-    );
-    return response;
-  }
-
   async createTransaction(
     factory: TransferTransactionsFactory,
     signer: UserSigner,
@@ -145,7 +137,7 @@ export class AirdropService {
     const signer = new UserSigner(mnemonic);
     const senderAddress = signer.getAddress().bech32();
 
-    const batchSize = 10000;
+    const batchSize = 2000;
 
     let hasMoreRecords = true;
     let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
@@ -158,10 +150,10 @@ export class AirdropService {
         continue;
       }
 
-      const txBatch = [];
+      const txBatch: any[] = [];
       const batchUpdates: Array<{ address: string; txHash: string }> = [];
 
-      for (const airdrop of airdrops) {
+      const transactionPromises = airdrops.map(async (airdrop) => {
         try {
           const { address, amount } = airdrop;
           const transaction = await this.createTransaction(
@@ -182,13 +174,15 @@ export class AirdropService {
         } catch (error) {
           console.error(`Failed to send tokens to ${airdrop.address}`);
         }
-      }
+      });
+
+      await Promise.all(transactionPromises);
 
       if (batchUpdates.length > 0) {
         try {
           await this.addTransactions(batchUpdates);
           console.log(
-            `Updated database with ${batchUpdates.length} transaction hashes`,
+            `Updated database with ${batchUpdates.length} transaction hashes.`,
           );
 
           await axios.post(
