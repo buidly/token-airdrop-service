@@ -16,6 +16,7 @@ libs:
       api: string
       gateway: string
       queue: string
+    xBulkAddress: string
     mnemonics:
       first: string
     tokens:

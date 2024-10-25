@@ -31,18 +31,6 @@ export class EventsNotifierConsumerService {
       for (const event of filteredEvents) {
         const identifier = event.identifier;
         if (identifier === ESDT_TRANSFER_IDENTIFIER) {
-          // const addressHex = Buffer.from(event.topics[3], 'base64').toString(
-          //   'hex',
-          // );
-          // const tokenIdentifierHex = Buffer.from(
-          //   event.topics[0],
-          //   'base64',
-          // ).toString('hex');
-          // const tokenIdentifierString = Buffer.from(
-          //   tokenIdentifierHex,
-          //   'hex',
-          // ).toString('utf-8');
-          // const address1 = Address.fromHex(addressHex);
           const txHash = event.txHash;
           await this.airdropService.executeTransaction(txHash);
         }

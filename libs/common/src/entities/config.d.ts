@@ -20,6 +20,7 @@ export interface Config {
         gateway: string;
         queue: string;
       };
+      xBulkAddress: string;
       mnemonics: {
         first: string;
       };

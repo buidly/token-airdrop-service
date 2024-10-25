@@ -102,25 +102,29 @@ export class AirdropRepository {
     }
   }
 
-  async executeTransaction(txHash: string): Promise<Airdrop | null> {
+  async executeTransaction(txHash: string): Promise<Airdrop[] | null> {
     try {
-      const airdrop = await this.airdropModel.findOne({ txHash }).exec();
+      const airdrops = await this.airdropModel
+        .find({ txHash, pending: true })
+        .exec();
 
-      if (!airdrop || !airdrop.pending) {
+      if (!airdrops || airdrops.length === 0) {
         return null;
       }
-      console.log(`Tx with success for ${airdrop.address}`);
-      return await this.airdropModel
-        .findOneAndUpdate(
-          { txHash },
+
+      console.log(`Tx with success for ${airdrops.length} addresses`);
+      await this.airdropModel
+        .updateMany(
+          { txHash, pending: true },
           {
             $unset: { timestamp: '' },
             pending: false,
             success: true,
           },
-          { new: true },
         )
         .exec();
+
+      return this.airdropModel.find({ txHash }).exec();
     } catch (error) {
       console.error('Error executing transaction:', error);
       throw error;
