@@ -138,7 +138,7 @@ export class AirdropService {
     airdrops: Array<Airdrop>,
     nonce: number,
   ): Transaction {
-    const baseGasPerAddress = 850000;
+    const baseGasPerAddress = 800000;
     const endpointArgs: any[] | undefined = [];
 
     const totalAmount = airdrops.reduce(
