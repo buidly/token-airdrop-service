@@ -61,6 +61,10 @@ export class AirdropService {
     return await this.airdropRepository.addTransaction(address, txHash);
   }
 
+  async countPendingAirdrops(): Promise<number> {
+    return await this.airdropRepository.countPendingAirdrops();
+  }
+
   async addTransactions(
     updates: Array<{ address: string; txHash: string }>,
   ): Promise<void> {

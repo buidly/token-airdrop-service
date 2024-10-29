@@ -52,6 +52,10 @@ export class AirdropRepository {
       .exec();
   }
 
+  async countPendingAirdrops(): Promise<number> {
+    return await this.airdropModel.countDocuments({ pending: true }).exec();
+  }
+
   async addTransaction(
     address: string,
     txHash: string,
