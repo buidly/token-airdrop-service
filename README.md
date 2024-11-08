@@ -8,8 +8,7 @@ REST API facade template for microservices that interacts with the MultiversX bl
 ## Dependencies
 
 1. Redis Server is required to be installed [docs](https://redis.io/).
-2. MySQL Server is required to be installed [docs](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
-3. MongoDB Server is required to be installed [docs](https://docs.mongodb.com/).
+2. MongoDB Server is required to be installed [docs](https://docs.mongodb.com/).
 
 You can run `docker-compose up` (or `docker-compose up -d` as detached) in a separate terminal to use a local Docker container for all these dependencies.
 
@@ -188,14 +187,12 @@ $ npm run test:cov
 
 # Airdrop document from DB:
 
-{
- address: string; -> receiver of the airdrop; from CSV; added at the creation
- amount: string; -> amount of the token to receive; from CSV; added at the creation
- txHash?: string; -> hash of the main transaction sended to the xBulk(the airdrops are part of this transaction); added by the cron job
- timestamp?: number; -> timestamp of the transaction try; added by the cron job
-  pending?: boolean; -> set to `true` by the cron then attempting to create transactions; deleted when events-notifier finds the transaction with success;
-  success?: boolean; -> set to `true` when events notifier finds the transaction with success
-}
+ - address: string; -> receiver of the airdrop; from CSV; added at the creation
+ - amount: string; -> amount of the token to receive; from CSV; added at the creation
+ - txHash?: string; -> hash of the main transaction sended to the xBulk(the airdrops are part of this transaction); added by the cron job
+ - timestamp?: number; -> timestamp of the transaction try; added by the cron job
+ - pending?: boolean; -> set to `true` by the cron then attempting to create transactions; deleted when events-notifier finds the transaction with success;
+ - success?: boolean; -> set to `true` when events notifier finds the transaction with success
 
 # ENV values:
 
