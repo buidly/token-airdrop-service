@@ -116,7 +116,6 @@ export class AirdropRepository {
         return null;
       }
 
-      console.log(`Tx with success for ${airdrops.length} addresses`);
       await this.airdropModel
         .updateMany(
           { txHash, pending: true },

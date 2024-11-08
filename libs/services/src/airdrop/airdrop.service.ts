@@ -13,7 +13,7 @@ import {
   TransferTransactionsFactory,
 } from '@multiversx/sdk-core/out';
 import { Mnemonic, UserSigner } from '@multiversx/sdk-wallet/out';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -24,12 +24,14 @@ const csvBatch = require('csv-batch');
 
 @Injectable()
 export class AirdropService {
+  private readonly logger: Logger;
   private readonly xBulkContract: SmartContract;
 
   constructor(
     private readonly airdropRepository: AirdropRepository,
     private readonly commonConfigService: CommonConfigService,
   ) {
+    this.logger = new Logger(AirdropService.name);
     const abiRegistry = AbiRegistry.create(xBulkContractAbi);
     this.xBulkContract = new SmartContract({
       address: new Address(this.commonConfigService.config.xBulkAddress),
@@ -97,10 +99,10 @@ export class AirdropService {
       batchExecution: async (batch: { address: string; amount: string }[]) =>
         await this.createMany(batch),
     }).then((results: { totalRecords: any }) => {
-      console.log(`Processed ${results.totalRecords}`);
+      this.logger.debug(`Processed ${results.totalRecords}`);
     });
 
-    console.log('CSV file processed with success.');
+    this.logger.debug('CSV file processed with success.');
   }
 
   async getAccountNonce(address: string): Promise<number | undefined> {
@@ -193,10 +195,6 @@ export class AirdropService {
     let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
     const airdrops = await this.findBatchWithoutTxHash(batchSize);
 
-    console.log(
-      `Processing ${airdrops.length} total airdrops in groups of ${groupSize}`,
-    );
-
     const txBatch: any[] = [];
     const batchUpdates: Array<{ address: string; txHash: string }> = [];
 
@@ -217,7 +215,6 @@ export class AirdropService {
           batchUpdates.push({ address, txHash });
         });
 
-        console.log(`Processed group ${i / groupSize + 1}, txHash: ${txHash}`);
         nonce++;
       } catch (error) {
         console.error(
@@ -230,23 +227,16 @@ export class AirdropService {
     if (txBatch.length > 0) {
       try {
         await this.addTransactions(batchUpdates);
-        console.log(
-          `Updated database with ${batchUpdates.length} transaction hashes.`,
-        );
 
         for (let i = 0; i < txBatch.length; i++) {
-          console.log(`Sending transaction ${i + 1} of ${txBatch.length}`);
-          const response = await axios.post(
+          await axios.post(
             `${this.commonConfigService.config.urls.gateway}/transaction/send`,
             txBatch[i],
           );
-          console.log(`Transaction ${i + 1} response:`, response.data);
         }
       } catch (error) {
-        console.error('Failed during batch processing:', error);
+        this.logger.error('Failed during batch processing:', error);
       }
     }
-
-    console.log('Airdrop processing completed.');
   }
 }
