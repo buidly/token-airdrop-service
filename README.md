@@ -173,8 +173,8 @@ $ npm run test:cov
 
 # API endpoints: 
 
-- `/create`: Used to start to process the csv file and create the objects for each airdrop (address & amount).
-- `/cleanup-airdrops`: Used to cleanup the objects that have the tx-hash from the try to airdrop older than 5 minutes, so the CRON can make another try.
+- `/create`: Starts processing the csv file and creates the objects for each airdrop in db (address & amount).
+- `/cleanup-airdrops`: Used to cleanup the objects that have the tx-hash from the airdrop older than 5 minutes, so the CRON can make another try.
 - `/count-pending`: Used to get the live number of pending airdrops.
 
 # CRONS functions:
@@ -183,15 +183,15 @@ $ npm run test:cov
 
 # EVENTS-NOTIFIER functions:
 
-- Listens on MultiversX block-chain for the transactions sended from the signer contract to the xBulk and updates the DB objects in case of success;
+- Listens on MultiversX block-chain for the transactions sent from the signer wallet to the xBulk and updates the DB objects in case of success;
 
 # Airdrop document from DB:
 
  - address: string; -> receiver of the airdrop; from CSV; added at the creation
  - amount: string; -> amount of the token to receive; from CSV; added at the creation
- - txHash?: string; -> hash of the main transaction sended to the xBulk(the airdrops are part of this transaction); added by the cron job
- - timestamp?: number; -> timestamp of the transaction try; added by the cron job
- - pending?: boolean; -> set to `true` by the cron then attempting to create transactions; deleted when events-notifier finds the transaction with success;
+ - txHash?: string; -> hash of the main transaction sent to the xBulk(the airdrops are part of this transaction); added by the cron job
+ - timestamp?: number; -> timestamp of the transaction; added by the cron job
+ - pending?: boolean; -> set to `true` by the cron when attempting to create transactions; deleted when events-notifier finds the transaction with success;
  - success?: boolean; -> set to `true` when events notifier finds the transaction with success
 
 ### How to use:
