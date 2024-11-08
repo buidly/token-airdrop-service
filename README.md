@@ -194,17 +194,6 @@ $ npm run test:cov
  - pending?: boolean; -> set to `true` by the cron then attempting to create transactions; deleted when events-notifier finds the transaction with success;
  - success?: boolean; -> set to `true` when events notifier finds the transaction with success
 
-# ENV values:
-
-- NETWORK= `mainnet`, `testnet`, `devnet`
-- API_URL= `https://devnet-api.multiversx.com` or the one from the network
-- GATEWAY_URL= `https://devnet-gateway.multiversx.com` or the one from the network
-- TOKEN_IDENTIFIER= the token identifier of the one that is subject of the airdrop
-- QUEUE_URL= URL of the notifier queue
-- XBULK_ADDRESS= Address of the xBulk smart-contract used
-- MNEMONIC_1= Mnemonic of the wallet that holds the tokens for the airdrop and will be used to send them
-
-
 ### How to use:
 
 **Example for DEVNET**
