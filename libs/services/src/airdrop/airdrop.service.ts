@@ -67,6 +67,10 @@ export class AirdropService {
     return await this.airdropRepository.countPendingAirdrops();
   }
 
+  async countUnprocessedAirdrops(): Promise<number> {
+    return await this.airdropRepository.countUnprocessedAirdrops();
+  }
+
   async addTransactions(
     updates: Array<{ address: string; txHash: string }>,
   ): Promise<void> {
@@ -179,6 +183,8 @@ export class AirdropService {
   }
 
   public async processAirdrops(): Promise<void> {
+    this.logger.debug('Starting the airdrop processing...');
+
     const chainId =
       this.commonConfigService.config.network.toString() === 'devnet'
         ? 'D'
@@ -194,6 +200,7 @@ export class AirdropService {
 
     let nonce = (await this.getAccountNonce(senderAddress)) ?? 0;
     const airdrops = await this.findBatchWithoutTxHash(batchSize);
+    this.logger.debug(`Found ${airdrops.length} airdrops to process.`);
 
     const txBatch: any[] = [];
     const batchUpdates: Array<{ address: string; txHash: string }> = [];
@@ -217,7 +224,7 @@ export class AirdropService {
 
         nonce++;
       } catch (error) {
-        console.error(
+        this.logger.error(
           `Failed to prepare transaction for group starting at index ${i}`,
           error,
         );
@@ -225,6 +232,10 @@ export class AirdropService {
     }
 
     if (txBatch.length > 0) {
+      this.logger.debug(
+        `Submitting ${txBatch.length} transactions to the gateway...`,
+      );
+
       try {
         await this.addTransactions(batchUpdates);
 
@@ -234,9 +245,14 @@ export class AirdropService {
             txBatch[i],
           );
         }
+        this.logger.debug('All transactions submitted successfully.');
       } catch (error) {
         this.logger.error('Failed during batch processing:', error);
       }
+    } else {
+      this.logger.debug('No transactions were prepared for submission.');
     }
+
+    this.logger.debug('Airdrop processing completed.');
   }
 }

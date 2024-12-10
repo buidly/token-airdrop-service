@@ -1,4 +1,5 @@
 import { AirdropService } from '@libs/services';
+import { Locker } from '@multiversx/sdk-nestjs-common';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
@@ -14,6 +15,8 @@ export class PendingTransactionsCheckService {
 
   @Cron('*/2 * * * *')
   async sendAirdrops(): Promise<void> {
-    await this.airdropService.processAirdrops();
+    await Locker.lock('sendAirdrops', async () => {
+      await this.airdropService.processAirdrops();
+    });
   }
 }

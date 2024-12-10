@@ -8,7 +8,7 @@ export class AirdropController {
   @Post('create')
   processCsv() {
     void this.airdropService.processAirdropCsv();
-    return { message: 'Airdrop CSV processed successfully' };
+    return { message: 'Started processing CSV file' };
   }
 
   @Post('cleanup-airdrops')
@@ -22,9 +22,12 @@ export class AirdropController {
   @Get('count-pending')
   async getPendingAirdropCount() {
     const pendingCount = await this.airdropService.countPendingAirdrops();
+    const unprocessedCount =
+      await this.airdropService.countUnprocessedAirdrops();
     return {
       message: 'Pending airdrop count retrieved successfully',
       pendingCount,
+      unprocessedCount,
     };
   }
 }

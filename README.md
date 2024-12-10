@@ -205,8 +205,8 @@ $ npm run test:cov
 
 After starting the apps and creating the docker container:
 
-1. #manual Use `/create` endpoint to process the CSV file and create the airdrops in DB;
+1. #manual Use `/airdrop/create` endpoint to process the CSV file and create the airdrops in DB;
 2. #auto CRON app will take the batches and will attempt to create transactions on blockchain till the completion;
 3. #auto EVENTS-NOTIFIER app will find the ones with success and will updated them in DB till the completion;
-4. #manual Can use `/count-pending` to see live time the number of the transactions that CRON attempted to create on blockchain but are not yet successful;
-5. #manual Can use `/cleanup-airdrops` to delete the pending transactions (after a considered time; for transactions that do not reached the blockchain)
+4. #manual Can use `/airdrop/count-pending` to see live time the number of the transactions that CRON attempted to create on blockchain but are not yet successful;
+5. #manual Can use `/airdrop/cleanup-airdrops` to delete the pending transactions (after a considered time; for transactions that do not reached the blockchain)

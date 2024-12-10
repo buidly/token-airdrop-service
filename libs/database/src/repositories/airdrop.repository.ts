@@ -56,6 +56,12 @@ export class AirdropRepository {
     return await this.airdropModel.countDocuments({ pending: true }).exec();
   }
 
+  async countUnprocessedAirdrops(): Promise<number> {
+    return await this.airdropModel
+      .countDocuments({ txHash: { $exists: false } })
+      .exec();
+  }
+
   async addTransaction(
     address: string,
     txHash: string,
