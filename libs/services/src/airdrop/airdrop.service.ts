@@ -86,6 +86,7 @@ export class AirdropService {
   }
 
   async processAirdropCsv(): Promise<void> {
+    this.logger.debug('Started processing CSV file');
     const filePath = path.join(
       process.cwd(),
       'libs',
