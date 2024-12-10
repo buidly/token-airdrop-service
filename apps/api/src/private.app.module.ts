@@ -9,17 +9,10 @@ import { AppConfigModule } from './config/app-config.module';
   imports: [
     LoggingModule,
     ApiMetricsModule,
-    DynamicModuleUtils.getCachingModule(),
     CommonConfigModule,
     AppConfigModule,
   ],
-  providers: [
-    DynamicModuleUtils.getNestJsApiConfigService(),
-    DynamicModuleUtils.getPubSubService(),
-  ],
-  controllers: [
-    ApiMetricsController,
-    HealthCheckController,
-  ],
+  providers: [DynamicModuleUtils.getNestJsApiConfigService()],
+  controllers: [ApiMetricsController, HealthCheckController],
 })
-export class PrivateAppModule { }
+export class PrivateAppModule {}

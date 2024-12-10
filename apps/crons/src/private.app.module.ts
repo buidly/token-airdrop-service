@@ -10,17 +10,8 @@ import { Module } from '@nestjs/common';
 import { CronsModule } from './crons.module';
 
 @Module({
-  imports: [
-    LoggingModule,
-    ApiMetricsModule,
-    DynamicModuleUtils.getCachingModule(),
-    CommonConfigModule,
-    CronsModule,
-  ],
-  providers: [
-    DynamicModuleUtils.getNestJsApiConfigService(),
-    DynamicModuleUtils.getPubSubService(),
-  ],
+  imports: [LoggingModule, ApiMetricsModule, CommonConfigModule, CronsModule],
+  providers: [DynamicModuleUtils.getNestJsApiConfigService()],
   controllers: [ApiMetricsController, HealthCheckController],
 })
 export class PrivateAppModule {}

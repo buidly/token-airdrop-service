@@ -11,7 +11,6 @@ dotenv.config({
   path: resolve(process.cwd(), envPath),
 });
 
-import { CommonConfigService, PubSubListenerModule } from '@libs/common';
 import { LoggerInitializer } from '@multiversx/sdk-nestjs-common';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -20,7 +19,6 @@ import '@multiversx/sdk-nestjs-common/lib/utils/extensions/array.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/date.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/number.extensions';
 import '@multiversx/sdk-nestjs-common/lib/utils/extensions/string.extensions';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { EventsNotifierConfigService } from './config/events-notifier-config.service';
 import { EventsNotifierModule } from './events.notifier.module';
 import { PrivateAppModule } from './private.app.module';
@@ -44,36 +42,16 @@ const setupPrivateApp = async () => {
   logger.log(`Private API active on port ${4006}`);
 };
 
-const setupPubSubApp = async (apiConfigService: CommonConfigService) => {
-  const pubSubApp = await NestFactory.createMicroservice<MicroserviceOptions>(
-    PubSubListenerModule,
-    {
-      transport: Transport.REDIS,
-      options: {
-        host: apiConfigService.config.redis.host,
-        port: 6379,
-        retryAttempts: 100,
-        retryDelay: 1000,
-        retryStrategy: () => 1000,
-      },
-    },
-  );
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  pubSubApp.listen();
-};
-
 async function bootstrap() {
   const app = await NestFactory.create(PrivateAppModule);
   const eventsNotifierConfigService = app.get<EventsNotifierConfigService>(
     EventsNotifierConfigService,
   );
-  const apiConfigService = app.get<CommonConfigService>(CommonConfigService);
 
   LoggerInitializer.initialize(logger);
 
   await setupEventsNotifierApp(eventsNotifierConfigService);
   await setupPrivateApp();
-  await setupPubSubApp(apiConfigService);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

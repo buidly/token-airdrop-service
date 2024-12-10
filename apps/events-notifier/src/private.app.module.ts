@@ -13,14 +13,10 @@ import { EventsNotifierConfigModule } from './config/events-notifier-config.modu
   imports: [
     LoggingModule,
     ApiMetricsModule,
-    DynamicModuleUtils.getCachingModule(),
     CommonConfigModule,
     EventsNotifierConfigModule,
   ],
-  providers: [
-    DynamicModuleUtils.getNestJsApiConfigService(),
-    DynamicModuleUtils.getPubSubService(),
-  ],
+  providers: [DynamicModuleUtils.getNestJsApiConfigService()],
   controllers: [ApiMetricsController, HealthCheckController],
 })
 export class PrivateAppModule {}
