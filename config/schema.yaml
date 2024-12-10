@@ -19,8 +19,8 @@ libs:
     xBulkAddress: string
     mnemonics:
       first: string
-    tokens:
-      first: string
+    tokenIdentifier: string
+    tokenDecimals: string
     database:
       host: string
       port: integer

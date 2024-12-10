@@ -121,9 +121,9 @@ export class AirdropService {
     nonce: number,
   ): Transaction {
     const payment = TokenTransfer.fungibleFromAmount(
-      this.commonConfigService.config.tokens.first,
+      this.commonConfigService.config.tokenIdentifier,
       amount,
-      18,
+      parseInt(this.commonConfigService.config.tokenDecimals),
     );
 
     const transaction = factory.createTransactionForESDTTokenTransfer({
@@ -154,7 +154,7 @@ export class AirdropService {
 
     const payment = new TokenTransfer({
       token: new Token({
-        identifier: this.commonConfigService.config.tokens.first,
+        identifier: this.commonConfigService.config.tokenIdentifier,
       }),
       amount: BigInt(totalAmount.toFixed()),
     });

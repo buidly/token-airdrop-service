@@ -16,8 +16,8 @@ libs:
     xBulkAddress: ${XBULK_ADDRESS}
     mnemonics:
       first: ${MNEMONIC_1}
-    tokens:
-      first: ${TOKEN_IDENTIFIER}
+    tokenIdentifier: ${TOKEN_IDENTIFIER}
+    tokenDecimals: ${TOKEN_DECIMALS}
     database:
       host: 'localhost'
       port: 27017
