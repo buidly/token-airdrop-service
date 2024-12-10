@@ -19,7 +19,7 @@ export class EventsNotifierConsumerService {
 
   EGLD_DECIMALS: number = 18;
   @RabbitSubscribe({
-    queue: 'materiaprima-local',
+    queue: process.env.QUEUE_NAME,
     createQueueIfNotExists: false,
   })
   async consumeEvents(blockEvent: NotifierBlockEvent) {
