@@ -78,7 +78,6 @@ In order to simplify the scripts, the templates will use the following environme
 
 **Usage**: When set to true, the application starts in watch mode, which automatically reloads the app on code changes.
 
-
 ### `npm run start`
 
 Runs the app in the production mode.
@@ -168,9 +167,10 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
 ### APPS short descriptions
 
-# API endpoints: 
+# API endpoints:
 
 - `/create`: Starts processing the csv file and creates the objects for each airdrop in db (address & amount).
 - `/cleanup-airdrops`: Used to cleanup the objects that have the tx-hash from the airdrop older than 5 minutes, so the CRON can make another try.
@@ -186,21 +186,21 @@ $ npm run test:cov
 
 # Airdrop document from DB:
 
- - address: string; -> receiver of the airdrop; from CSV; added at the creation
- - amount: string; -> amount of the token to receive; from CSV; added at the creation
- - txHash?: string; -> hash of the main transaction sent to the xBulk(the airdrops are part of this transaction); added by the cron job
- - timestamp?: number; -> timestamp of the transaction; added by the cron job
- - pending?: boolean; -> set to `true` by the cron when attempting to create transactions; deleted when events-notifier finds the transaction with success;
- - success?: boolean; -> set to `true` when events notifier finds the transaction with success
+- address: string; -> receiver of the airdrop; from CSV; added at the creation
+- amount: string; -> amount of the token to receive; from CSV; added at the creation
+- txHash?: string; -> hash of the main transaction sent to the xBulk(the airdrops are part of this transaction); added by the cron job
+- timestamp?: number; -> timestamp of the transaction; added by the cron job
+- pending?: boolean; -> set to `true` by the cron when attempting to create transactions; deleted when events-notifier finds the transaction with success;
+- success?: boolean; -> set to `true` when events notifier finds the transaction with success
 
 ### How to use:
 
 **Example for DEVNET**
 
 - add CSV file in: `./libs/services/src/constants/airdrop.csv`; format: "address","amount"
-- `docker-compose up -d` - to create the docker part of the project (DB)
-- `NODE_ENV=devnet npm run start:api` - starts the API 
-- `NODE_ENV=devnet npm run start:crons` - starts the CRONS 
+- `docker-compose up -d`
+- `NODE_ENV=devnet npm run start:api` - starts the API
+- `NODE_ENV=devnet npm run start:crons` - starts the CRONS
 - `NODE_ENV=devnet npm run start:events-notifier` - starts the EVENTS-NOTIFIER
 
 After starting the apps and creating the docker container:

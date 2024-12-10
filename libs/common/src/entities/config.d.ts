@@ -14,7 +14,7 @@ export interface Config {
   };
   libs: {
     common: {
-      network: 'devnet' | 'testnet' | 'mainnet';
+      network: "devnet" | "testnet" | "mainnet";
       urls: {
         api: string;
         gateway: string;
@@ -34,10 +34,6 @@ export interface Config {
         password?: string;
         name: string;
         tlsAllowInvalidCertificates: boolean;
-      };
-      redis: {
-        host: string;
-        port: number;
       };
       nativeAuth: {
         maxExpirySeconds: number;

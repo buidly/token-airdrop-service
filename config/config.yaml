@@ -25,9 +25,6 @@ libs:
       # password: 'root'
       name: 'example'
       tlsAllowInvalidCertificates: true
-    redis:
-      host: '127.0.0.1'
-      port: 6379
     nativeAuth:
       # maxExpirySeconds:
       acceptedOrigins:

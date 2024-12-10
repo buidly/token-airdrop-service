@@ -34,9 +34,6 @@ libs:
       tlsAllowInvalidCertificates:
         type: boolean
         default: false
-    redis:
-      host: string
-      port: integer
     nativeAuth:
       maxExpirySeconds:
         type: integer
