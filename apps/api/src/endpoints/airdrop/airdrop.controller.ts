@@ -19,6 +19,14 @@ export class AirdropController {
     };
   }
 
+  @Post('cleanup-invalid')
+  async cleanupInvalidAddresses() {
+    await this.airdropService.cleanupInvalidAddresses();
+    return {
+      message: 'Success',
+    };
+  }
+
   @Get('count-pending')
   async getPendingAirdropCount() {
     const pendingCount = await this.airdropService.countPendingAirdrops();

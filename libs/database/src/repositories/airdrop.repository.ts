@@ -1,4 +1,5 @@
 import { Airdrop, AirdropDocument } from '@libs/entities';
+import { AddressUtils } from '@multiversx/sdk-nestjs-common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -29,7 +30,10 @@ export class AirdropRepository {
     records: Array<{ address: string; amount: string }>,
   ): Promise<Airdrop[] | null> {
     try {
-      const result = await this.airdropModel.insertMany(records, {
+      const filteredRecords = records.filter((record) =>
+        AddressUtils.isAddressValid(record.address),
+      );
+      const result = await this.airdropModel.insertMany(filteredRecords, {
         ordered: false,
       });
 
@@ -154,5 +158,25 @@ export class AirdropRepository {
         },
       )
       .exec();
+  }
+
+  async cleanupInvalidAddresses(): Promise<void> {
+    try {
+      const allEntries = await this.airdropModel.find().exec();
+
+      const invalidEntries = allEntries.filter(
+        (entry) => !AddressUtils.isAddressValid(entry.address),
+      );
+
+      if (invalidEntries.length === 0) {
+        console.log('No invalid addresses found.');
+        return;
+      }
+
+      const invalidIds = invalidEntries.map((entry) => entry._id);
+      await this.airdropModel.deleteMany({ _id: { $in: invalidIds } });
+    } catch (error) {
+      console.error('Error cleaning up invalid addresses:', error);
+    }
   }
 }

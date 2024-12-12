@@ -85,6 +85,10 @@ export class AirdropService {
     return await this.airdropRepository.cleanupOldTransactions();
   }
 
+  async cleanupInvalidAddresses(): Promise<void> {
+    return await this.airdropRepository.cleanupInvalidAddresses();
+  }
+
   async processAirdropCsv(): Promise<void> {
     this.logger.debug('Started processing CSV file');
     const filePath = path.join(
